@@ -3,35 +3,53 @@
 `r if (knitr::is_latex_output()) '\\pagenumbering{arabic}
 \\setcounter{page}{1}'`
 
-Statistics, like all science, are man-made. Acceptance of their presuppositions depends on human intuition of how to model connections between variables, what distributional assumptions make sense -- and what constitutes an outlier. In many cases, these presuppositions are straightforward and we seldomly question them. This makes sense, of course. It is impossible to make progress if we questioned our most basic assumptions all the time. Before going on to outlier analysis, however, let us briefly revisit the beginnings of statistics. Francis Galton, an early pioneer of regression analysis, discovered a curious connection when analyzing body height of parents and their children.
+In the late 1990s, neuroscientists faced a curious problem. They investigated a set of neurons which started to fire when a bar with a certain orientation appeared within their receptive field, i. e. the visual area these neurons were concerned with. However, when this bar extended their receptive field, the firing stopped. This behaviour is called *endstopping*.
 
-```{r galton-1, out.width='50%', warning=FALSE, message=FALSE, fig.cap='(ref:galton-1)', echo=FALSE}
-require(psych)
-require(ggplot2)
-data(galton)
-ggplot(galton, aes(x = parent, y = child)) + geom_point() + theme_minimal() + theme(axis.title = element_text(size = 15), axis.text = element_text(size = 15)) + labs(x = 'Body height children (in)', y = 'Average body height parents (in)')
+```{r endstopping, echo=FALSE, message=FALSE, fig.cap='(ref:endstopping)', out.width="100%",  fig.asp=if(knitr::is_html_output()) 0.33 else 1}
+df <- tribble(
+  ~xmin, ~xmax, ~ymin, ~ymax, ~seq, ~colour, ~alpha,
+  4.5, 4.5, 1, 2, 1, "grey", 0,
+  4, 5, 1, 2, 2, "darkorange1", 1, 
+  1, 8, 1, 2, 3, "grey", 1
+)
+df2 <- df[c(1:3, 2),]
+df2$seq[4] <- 4
+if(knitr::is_html_output()) {
+  ggplot(df2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax)) + theme_void() + scale_x_continuous(limits = c(0, 9)) + scale_y_continuous(limits = c(0, 3)) + geom_rect(aes(xmin = 3, xmax = 6, ymin = 0, ymax = 3, fill = colour), show.legend = FALSE, alpha = .5) + scale_fill_identity() + geom_rect(aes(xmin = 0, xmax = 9, ymin = 0, ymax = 3), colour = "black", fill = NA) + geom_rect(fill = "black", mapping = aes(alpha = alpha), show.legend = FALSE) + scale_alpha_identity() + transition_states(seq, transition_length = 2, state_length = 1)
+}
+if(!knitr::is_html_output()) {
+  ggplot(df, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax)) + theme_void() + scale_x_continuous(limits = c(0, 9)) + scale_y_continuous(limits = c(0, 3)) + geom_rect(aes(xmin = 3, xmax = 6, ymin = 0, ymax = 3, fill = colour), show.legend = FALSE, alpha = .5) + scale_fill_identity() + geom_rect(aes(xmin = 0, xmax = 9, ymin = 0, ymax = 3), colour = "black", fill = NA) + geom_rect(fill = "black", mapping = aes(alpha = alpha), show.legend = FALSE) + scale_alpha_identity() + facet_grid(rows = vars(seq))
+}
 ```
 
-(ref:galton-1) Galton's heredity data in the `psych` package [@R-psych, dataset `galton`]
+(ref:endstopping) Illustration of endstopping: The shaded rectangle shows the receptive field of the neuron. The black rectangle represents the bar. If the receptive field is grey, the neuron does not fire, if it is orange, the neuron fires.
 
-Whereas taller parents had taller children, the offspring of particularly tall parents was smaller than them wheareas smaller parents' children had a relatively large body height. In an attempt to characterize the connection he drew a line with a slope of 2/3. [@Galton1889, p. 96f.] Regression analysis has come a far way since then. His successors determined the more rigorous method of least squares to compute linear models. The slope determined by this method is 0.65; Galton's visual estimation[^1] had therefore been quite accurate.
+Different functions of these endstopped neurons had been postulated. Studies had suggested a role for these cells in detecting curvature, line terminations, occlusion, perceptual grouping and illusory contours. [@Rao1999] Rao and Ballard's study presented an alternative explanation for this effect. Their analysis suggested that higher-level neurons whose receptive field resembled the entire area in figure \@ref(fig:endstopping) predicted the lower-level input. Feedback connections transmitted the error of the transmission. According to Rao and Ballard, the endstopped neurons had the function of error feedback.
 
-```{r galton-2, out.width='50%', warning=FALSE, message=FALSE, fig.cap='(ref:galton-2)', echo=FALSE, fig.show='hold'}
-# Workaround
-require(png)
-require(grid)
-img <- readPNG("figs/galton.png")
-g <- rasterGrob(img, interpolate=TRUE)
-qplot(1:10, 1:10, geom="blank") +
-  annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) + 
-  theme_void()
-# knitr::include_graphics('figs/galton.png')
-ggplot(galton, aes(x = child, y = parent)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + coord_flip() + theme_minimal() + theme(axis.title = element_text(size = 15), axis.text = element_text(size = 15)) + labs(x = 'Body height children (in)', y = 'Average body height parents (in)')
-```
+They demonstrated this by fitting a hierarchical model with three layers on image patches extracted from five natural photos such that the higher-level layers optimally predicted the lower-level layers. The feedback nodes encoding the difference between the values in the second layer and the values that had been predicted by the third layer exhibited endstopping effects. [@Rao1999]
 
-(ref:galton-2) Left: Galton's original estimation (the line connecting C and D). Right: Least Squares linear model. Note that the x -axis now represents the parents' height wheareas the childrens' height is drawn on the y-axis.
+The explanation for neuronal endstopping therefore consists of two parts: firstly, the structure of neuronal networks allow for association of neighbouring pixels which is necessary to detect bars. Secondly, short bars are less usual than longer bars[^1]. This is the reason why the higher-level neurons predict a longer bar in these cases and receive a higher error feedback signal. Short bars are therefore *outliers*. Endstopped neurons thus provide a natural example for outlier detection.
 
-[^1]: reproduced from Galton [-@Galton1889, p. 96]
+[^1]: Rao and Ballard demonstrated this by another investigation [@Rao1999].
 
-The mathematical formulation of regression allowed for a more rigorous analysis and an extension to multivariate analysis -- after all, visual estimation of a 10-dimensional hyperplance is not feasible. Since then, many extensions and alternative formulations have yielded methods that can model arbitrarily complex relationships and handle various formats of data. In many cases, however, the linear model still provides the basis for the analysis. There are certainly mathematical advantages of this approach; another important reason is that we can easily grasp linear connections -- rules like "if the parents are three inch taller, the children are, on the average, two inch taller" are immediately clear. One might even say that we are wired to understand correlation, as the Hebbian rule maintains that synaptic connection adapt by learning correlations between neuronal firing rates [see @Hebb1949, @Gerstner2002]. A statistical approach that is grounded in the linear model is therefore a sensible formalization of our intuition.
+Since these investigation, predictive coding, the hypothesis that higher-level neuronal layers attempt to predict lower-level layers, has become popular with respect to different areas of the brain [@Friston2005]. Intuitively, this makes sense: if the received input represents usual patterns the information of the higher-level neurons suffices so that lower-level correction is only required if something unusual happens. This allows the brain to build a model of reality as such a model cannot account for all irregularities and retain its descriptive power. Consider, for instance, a chess game where the player attempts to predict his opponent's actions. It is impossible to consider all possible moves. Instead, the player has to restrict himself to the most probable ones. If the next move has been considered by the player, his opponent behaves in the usual way and the player can rest assured. In contrast, if the player has not considered the next move, he may be alerted. Unusual behavior therefore merits special attention, in particular, if it is impossible to model all paths of behavior.
 
+The statistical implementation of this strategy is given by outlier detection. The examples are manifold:
+
+* It is impossible to model all possible methods to commit credit card fraud. Instead, we simply try to detect unusual behavior.
+* There are many different reasons why data points may deviate from the assumptions of the classical linear model but many of these deviations are observable by looking at different kinds of residual errors.
+* There are many different reasons why a sensor can be corrupted and not all of them can be considered. However, many of them manifest themselves in unusual patterns.
+
+*Outliers* can now be defined as those data points that are *dissimilar from the other data points* [see @Aggarwal2017]. The particular outlier detection methods defines what it means for data points to be similar to each other. For instance, with respect to the endstopping neurons, image patches are similar if they can be characterized by the same neuronal model.
+
+This report focuses on methods that generate predictions and assess them in order to judge how *usual* a certain data point is. Its structure is based on chapter 3 of Aggarwal's *Outlier Analysis* [-@Aggarwal2017]. Two alternative popular approaches are probabilistic modeling [@Aggarwal2017, ch. 2] and clustering [@Aggarwal2017, ch. 4]. Note that the distinction is not well-defined and there are many methods that can be attributed to different fields (see [chapter 2](#methods)).
+
+[Chapter 2](#methods) presents a general methodology to assess outlier scores and introduces the *Z-plot* as a visualization of outlier scores..
+
+Subsequently, [chapter 3](#linear) introduces outlier detection using linear models and principal component analysis. All these methods are limited by the fact that they can only model linear relationships. This disadvantage is adressed in [chapter 4](#nonlinear) where nonlinear extensions of these methods are introduced. Specifically, the kernel trick is introduced yielding kernel principal component analysis. Finally, more complex regressions, in particular neural networks, are introduced. Methodological instructions consist of the following parts:
+
+* **Motivation** and **intuition**: What does it mean for a data point to be usual? What hyperparameters need to be adjusted and how do they affect whether data points are usual?
+* **Implementation** in R
+* Example **application**: a two-dimensional outlier analysis using different generated datasets should provide an intuition for advantages and disadvantages of every method as it is visually easy to assess
+* Applications in **compression** and data **correction**, two related fields to outlier detection
+* **Pro** and **Contra**

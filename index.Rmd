@@ -12,6 +12,19 @@ description: "This article is concerned with outlier detection using regression 
 
 # Abstract {-}
 
-This report will provide an overview over outlier detection in R. It starts by discussing some general principles of outlier detection. Linear methods and their nonlinear extensions are presented next. Along the general methods, examples of application and an appropriate methodology in R are introduced. The report will be concluded by a discussion of method evaluation as well as a comparison of the different introduced algorithms.
+This report will provide an overview over outlier detection in R. It starts by discussing some general principles of outlier detection. Linear methods and their nonlinear extensions are presented next. Along the general methods, examples of application and an appropriate methodology in R are introduced.
+
+```{r setup, echo = FALSE, warning = FALSE, error = FALSE, message = FALSE}
+library(kernlab)
+library(tidyverse)
+library(scico)
+library(scales)
+library(magrittr)
+library(MASS)
+library(patchwork)
+library(gganimate)
+library(purrr)
+my_theme <- theme_minimal()
+```
 
 `r if (knitr::is_latex_output()) '\\tableofcontents'`

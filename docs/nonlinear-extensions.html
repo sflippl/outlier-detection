@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Nonlinear extensions | outlier-detection.utf8.md</title>
+  <meta name="description" content="This article is concerned with outlier detection using regression in R." />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Nonlinear extensions | outlier-detection.utf8.md" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This article is concerned with outlier detection using regression in R." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Nonlinear extensions | outlier-detection.utf8.md" />
+  
+  <meta name="twitter:description" content="This article is concerned with outlier detection using regression in R." />
+  
+
+<meta name="author" content="Samuel Lippl" />
+
+
+<meta name="date" content="2019-09-22" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="linear.html"/>
+<link rel="next" href="summary.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Outlier Detection using Regression</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Abstract</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction: neurons, models and outliers</a></li>
+<li class="chapter" data-level="2" data-path="methodology.html"><a href="methodology.html"><i class="fa fa-check"></i><b>2</b> Methodology</a><ul>
+<li class="chapter" data-level="2.1" data-path="methodology.html"><a href="methodology.html#a-nested-account-of-outlier-detection"><i class="fa fa-check"></i><b>2.1</b> A nested account of outlier detection</a></li>
+<li class="chapter" data-level="2.2" data-path="methodology.html"><a href="methodology.html#context-probabilistic-and-cluster-analysis-for-outlier-detection"><i class="fa fa-check"></i><b>2.2</b> Context: Probabilistic and cluster analysis for outlier detection</a></li>
+<li class="chapter" data-level="2.3" data-path="methodology.html"><a href="methodology.html#z-scoring-a-heuristic-for-normalization-of-outlier-scores"><i class="fa fa-check"></i><b>2.3</b> Z-Scoring: A heuristic for normalization of outlier scores</a></li>
+<li class="chapter" data-level="2.4" data-path="methodology.html"><a href="methodology.html#evaluation-of-outlier-detection-algorithms"><i class="fa fa-check"></i><b>2.4</b> Evaluation of outlier detection algorithms</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="linear.html"><a href="linear.html"><i class="fa fa-check"></i><b>3</b> Linear Outlier Detection</a><ul>
+<li class="chapter" data-level="3.1" data-path="linear.html"><a href="linear.html#linear-model"><i class="fa fa-check"></i><b>3.1</b> Linear Models</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="linear.html"><a href="linear.html#motivation"><i class="fa fa-check"></i><b>3.1.1</b> Motivation</a></li>
+<li class="chapter" data-level="3.1.2" data-path="linear.html"><a href="linear.html#definition-and-implementation-in-r"><i class="fa fa-check"></i><b>3.1.2</b> Definition and implementation in R</a></li>
+<li class="chapter" data-level="3.1.3" data-path="linear.html"><a href="linear.html#example-application"><i class="fa fa-check"></i><b>3.1.3</b> Example application</a></li>
+<li class="chapter" data-level="3.1.4" data-path="linear.html"><a href="linear.html#data-compression-and-correction"><i class="fa fa-check"></i><b>3.1.4</b> Data compression and correction</a></li>
+<li class="chapter" data-level="3.1.5" data-path="linear.html"><a href="linear.html#discussion"><i class="fa fa-check"></i><b>3.1.5</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="linear.html"><a href="linear.html#linear-pca"><i class="fa fa-check"></i><b>3.2</b> Principal Component Analysis</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="linear.html"><a href="linear.html#motivation-1"><i class="fa fa-check"></i><b>3.2.1</b> Motivation</a></li>
+<li class="chapter" data-level="3.2.2" data-path="linear.html"><a href="linear.html#definition"><i class="fa fa-check"></i><b>3.2.2</b> Definition</a></li>
+<li class="chapter" data-level="3.2.3" data-path="linear.html"><a href="linear.html#example-application-1"><i class="fa fa-check"></i><b>3.2.3</b> Example application</a></li>
+<li class="chapter" data-level="3.2.4" data-path="linear.html"><a href="linear.html#data-compression-and-correction-1"><i class="fa fa-check"></i><b>3.2.4</b> Data compression and correction</a></li>
+<li class="chapter" data-level="3.2.5" data-path="linear.html"><a href="linear.html#discussion-1"><i class="fa fa-check"></i><b>3.2.5</b> Discussion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html"><i class="fa fa-check"></i><b>4</b> Nonlinear extensions</a><ul>
+<li class="chapter" data-level="4.1" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#kernel-pca"><i class="fa fa-check"></i><b>4.1</b> Kernel PCA</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#motivation-2"><i class="fa fa-check"></i><b>4.1.1</b> Motivation</a></li>
+<li class="chapter" data-level="4.1.2" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#definition-1"><i class="fa fa-check"></i><b>4.1.2</b> Definition</a></li>
+<li class="chapter" data-level="4.1.3" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#example-application-2"><i class="fa fa-check"></i><b>4.1.3</b> Example application</a></li>
+<li class="chapter" data-level="4.1.4" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#discussion-2"><i class="fa fa-check"></i><b>4.1.4</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="nonlinear-extensions.html"><a href="nonlinear-extensions.html#neural-networks"><i class="fa fa-check"></i><b>4.2</b> Neural networks</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="summary.html"><a href="summary.html"><i class="fa fa-check"></i><b>5</b> Summary</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="nonlinear-extensions" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Nonlinear extensions</h1>
+<div id="kernel-pca" class="section level2">
+<h2><span class="header-section-number">4.1</span> Kernel PCA</h2>
+<div id="motivation-2" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Motivation</h3>
+<p>The greatest limitations of the methods presented in the last chapter had been their linearity. We may adress this issue by non-linear transformations of the variables. This is popular, for instance, with classical regression methods, as well. We therefore define a transformation</p>
+<p><span class="math display">\[
+\Phi: \mathbb{R}^p\to \mathbb{R}^q, X\mapsto \Phi(X).
+\]</span></p>
+
+<div class="example">
+<p><span id="exm:unnamed-chunk-7" class="example"><strong>Example 4.1  </strong></span>A common example would be a polynomial transformation, e.g.</p>
+<span class="math display">\[
+  \Phi(X_1,\dotsc, X_p):=(X_1,X_1^2,X_1^3,\dotsc, X_p, X_p^2, X_p^3).
+  \]</span>
+</div>
+
+<p>We can now define the kernel PCA on <span class="math inline">\(X\)</span> as a linear PCA on <span class="math inline">\(\Phi(X)\)</span>, as such a method would be able to capture non-linearities. However, computational limits come into mind: <span class="math inline">\(\Phi(X)\)</span> is only required to compute <span class="math inline">\(\Phi(X)^T\Phi(X)\)</span> which is only required to compute the principal components. For this reason, there is a more efficient way to compute the kernel PCA.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>The following proposition is the key to the solution:</p>
+
+<div class="proposition">
+<p><span id="prp:unnamed-chunk-8" class="proposition"><strong>Proposition 4.1  </strong></span>Consider the principal components</p>
+<p><span class="math display">\[
+  XX^T=QM^2Q^T, Q,M\in\mathbb{R}^{n\times n}, Q^TQ=I,
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+  X^TX=P\Lambda^2P^T, P,\Lambda\in\mathbb{R}^{p\times p}, P^TP=I.
+\]</span></p>
+<ol style="list-style-type: decimal">
+<li>For all <span class="math inline">\(1\le i\le p\)</span>, <span class="math inline">\(\Lambda_{ii}=M_{ii}\)</span> and if <span class="math inline">\(i&gt;p\)</span>, <span class="math inline">\(M_{ii}=0\)</span>,</li>
+<li>For all <span class="math inline">\(1\le k\le p\)</span>, the first <span class="math inline">\(k\)</span> columns of <span class="math inline">\(QM\)</span> correspond to the first <span class="math inline">\(k\)</span> principal components. Columns <span class="math inline">\(p+1\)</span> to <span class="math inline">\(n\)</span> of <span class="math inline">\(QM\)</span> are zero.</li>
+</ol>
+</div>
+
+<p>This proposition essentially yields that we can compute the PCA with <span class="math inline">\(XX^T\)</span> alone. The <em>kernel trick</em> uses that fact by computing</p>
+<p><span class="math display">\[
+K(X):=\Phi(X)\Phi(X)^T
+\]</span></p>
+<p>directly from <span class="math inline">\(X\)</span> instead of computing <span class="math inline">\(\Phi(X)\)</span> before the analysis. <span class="math inline">\(K\)</span> is called the <em>kernel</em>.</p>
+</div>
+<div id="definition-1" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> Definition</h3>
+<p>In order to define kernel PCAs, we need to consider what properties <span class="math inline">\(K\)</span> must possess. As principal component analysis only works on positively semi-definite matrices, we define a <em>kernel</em> as a function which only yields positively semi-definite matrices.</p>
+<p>We can therefore define the kernel PCA in the following way:</p>
+
+<div class="definition">
+<p><span id="def:unnamed-chunk-9" class="definition"><strong>Definition 4.1  </strong></span>Consider observations <span class="math inline">\(X\in\mathbb{R}^n\)</span> and a kernel <span class="math inline">\(K:\mathbb{R}^n\to\mathbb{R}^{n\times n}\)</span>. <em>Outlier detection using kernel PCA</em> is defined by applying principal component analysis to</p>
+<p><span class="math display">\[
+  K(X)=P\Lambda^2P^T.
+\]</span></p>
+<p>which results in the nonlinear principal components <span class="math inline">\(T_1,\dotsc,T_m\)</span> where <span class="math inline">\(m\le n\)</span> is chosen such that <span class="math inline">\(\Lambda_{m+1}=0\)</span>. The outlier score is then defined by</p>
+<span class="math display">\[
+  \sum_{k=1}^m\Lambda_{k}^{-2}T_k^2.
+\]</span>
+</div>
+
+<p>The great advantage of such a definition is that we do not actually have to consider the nonlinear transformation of <span class="math inline">\(X\)</span>. Instead, we determine an appropriate similarity matrix which provides an easy extension of the kernel PCA to cases where <span class="math inline">\(X\)</span> is not numeric. In practice, examples of popular kernels are</p>
+<ul>
+<li><em>polynomial</em> kernels: <span class="math inline">\((X_i\cdot X_j+c)^h, c\in\mathbb{R},h\in \mathbb{N}\)</span>
+<ul>
+<li><span class="math inline">\(c=.5\)</span> and <span class="math inline">\(h=2\)</span> would yield the square transformation <span class="math inline">\(X_k\mapsto (X_k, X_k^2)\)</span></li>
+<li><span class="math inline">\(c=0\)</span> and <span class="math inline">\(h=1\)</span> would yield the ordinary dot product similarity matrix</li>
+</ul></li>
+<li><em>Gaussian</em> kernels: <span class="math inline">\(\exp\left(-\frac{|X_i-X_j|^2}{\sigma^2}\right)\)</span></li>
+<li><em>Sigmoid</em> kernels: <span class="math inline">\(\tanh\left(\kappa X_i\cdot X_j-\delta\right)\)</span>.</li>
+</ul>
+<p>The package <code>kernlab</code> <span class="citation">(Karatzoglou et al. <a href="#ref-kernlab">2004</a>)</span> implements kernel PCA in R.</p>
+<ol style="list-style-type: decimal">
+<li>Compute the kernel PCA using <code>kernlab::kpca</code>. The kernel is provided by an appropriate string to the argument <code>kernel</code> and the parameters of the kernel are provided to the argument <code>kpar</code>, e. g.: <code>pca &lt;- kernlab::kpca( ~ V1 + V2, data = data, kernel = &quot;polynomial&quot;, kpar = list(c = 0.5, h = 2))</code>.</li>
+<li>Predict the principal components using <code>predict</code>, e. g. <code>pcs &lt;- predict(pca, data)</code></li>
+<li>Compute the outlier score, e. g.: <code>pcs ^ 2 %*% eig(pca) ^ (-2)</code>.</li>
+</ol>
+</div>
+<div id="example-application-2" class="section level3">
+<h3><span class="header-section-number">4.1.3</span> Example application</h3>
+<p>In the example application, we will consider the following two kernels:</p>
+<ul>
+<li><strong>Square kernel:</strong> <span class="math inline">\(K(X_i,X_j):=(X_i\cdot X_j+0.5)^2\)</span></li>
+<li><strong>Gaussian kernel:</strong> <span class="math inline">\(\exp(-\frac{|X_i-X_j|^2}{\sigma^2})\)</span></li>
+</ul>
+<p>By default, <span class="math inline">\(\sigma\)</span> is set as <span class="math inline">\(0.1\)</span>, so we will use that parameter value.</p>
+<p>We will first consider results regarding the linear pattern, as shown in figure <a href="nonlinear-extensions.html#fig:kpca-lin">4.1</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:kpca-lin"></span>
+<img src="outlier-detection_files/figure-html/kpca-lin-1.png" alt="Example application of the kernel PCA to the linear pattern" width="100%" />
+<p class="caption">
+Figure 4.1: Example application of the kernel PCA to the linear pattern
+</p>
+</div>
+<p>The Gaussian kernel is too restrictive with respect to the linear pattern and both the Gaussian and the polynomial kernel again regard both directions as important where the pattern is actually given by the line.</p>
+<p>Both methods fare quite well with the circular pattern in <a href="nonlinear-extensions.html#fig:kpca-circ">4.2</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:kpca-circ"></span>
+<img src="outlier-detection_files/figure-html/kpca-circ-1.png" alt="Example application of the kernel PCA to the circular pattern" width="100%" />
+<p class="caption">
+Figure 4.2: Example application of the kernel PCA to the circular pattern
+</p>
+</div>
+<p>Even though some inliers might be classified as outliers according to the threshold of 2 standard deviations, any other threshold recognizes the inliers. The Gaussian kernel even recognizes that the points within the circle should be classified as outliers, as well. On the whole, both methods results correspond to our intuition and are fairly strict.</p>
+<p>In contrast, the Gaussian kernel is too strict with respect to the quadratic pattern in <a href="nonlinear-extensions.html#fig:kpca-quad">4.3</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:kpca-quad"></span>
+<img src="outlier-detection_files/figure-html/kpca-quad-1.png" alt="Example application of the kernel PCA to the quadratic pattern" width="100%" />
+<p class="caption">
+Figure 4.3: Example application of the kernel PCA to the quadratic pattern
+</p>
+</div>
+<p>However, the polynomial kernel captures the pattern almost perfectly.</p>
+<p>Finally, both methods struggle with the sinusoidal pattern in <a href="nonlinear-extensions.html#fig:kpca-trig">4.4</a>. The polynomial seems insufficiently complex for this pattern whereas the more local Gaussian kernel does not recognize the overall pattern but only some denser points. The latter is, on the whole, too restrictive, however.</p>
+<div class="figure" style="text-align: center"><span id="fig:kpca-trig"></span>
+<img src="outlier-detection_files/figure-html/kpca-trig-1.png" alt="Example application of the kernel PCA to the sinusoidal pattern" width="100%" />
+<p class="caption">
+Figure 4.4: Example application of the kernel PCA to the sinusoidal pattern
+</p>
+</div>
+<p>These examples demonstrate that kernel PCAs can yield powerful results but still need to be assessed carefully. Fitting the hyperparameters and using certain evaluation criteria can help ensure a good result. In particular the quadratic kernel seems to be adept at handling nonlinear patterns which are not too complex.</p>
+</div>
+<div id="discussion-2" class="section level3">
+<h3><span class="header-section-number">4.1.4</span> Discussion</h3>
+<p>In summary, the great flexibility is the decisive advantage of kernel PCA. This method, together with the right kernel, can recognize and handle arbitrary data. Such flexibility, however, has a downside, as well. Due to the many hyperparameters, the method is susceptible to overfitting. Moreover, it is more difficult to fit such a model compared to a linear model which is relatively easy to understand and apply.</p>
+<p>Another advantage which comes with the kernel trick is that any similarity measure can be used for kernel PCA as long as it yields a positive semi-definite matrix. This means that kernel PCA can be applied to topics as diverse as graph analysis, spatiotemporal analysis and text analysis.</p>
+</div>
+</div>
+<div id="neural-networks" class="section level2">
+<h2><span class="header-section-number">4.2</span> Neural networks</h2>
+<p>I will conclude with a short excursion to outlier detection using <em>neural networks</em>.</p>
+<p><em>Neural networks</em> are a Machine Learning algorithm which is adept at approximating complex, non-linear patterns. Their application to outlier detection can well be motivated by considerations in the field of data compression. We compress data by identifying its decisive properties and attempting to summarize it by as few numbers as possible. For instance our perception summarizes any colour by three numbers: its redness, blueness and greenness. Three numbers are therefore sufficient to describe our perception of any colour. These summaries are often nonlinear which is why neural networks are suitable for handling them. Broadly speaking, neural networks consist of several layers of nodes where a weighted sum of all the nodes in one layer feeds into the node of the next layer. Any layer therefore only depends on the values in the layer before.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The idea of outlier detection using neural networks is therefore the following: we map the input layer (i. e. all variables) through several intermediate layers to the mid-layer which contains of a lower number of nodes. Then we reflect this architecture and finally attempt to predict the same variables from the initial variables by following the <em>backpropagation algorithm</em>. The better we perform at predicting the input from the input the better our compression using the mid-layer works. On the other hand, those observations which cannot be predicted very well apparently do not adhere to the general pattern.</p>
+<p>In R, neural networks can, for instance, be fitted using the package <code>keras</code>. <span class="citation">(Allaire and Chollet <a href="#ref-keras">2018</a>)</span> Due to the many hyperparameters such as number of layers and number of nodes in each layer, fitting a neural network is a complex undertaking which goes beyond the scope of this report. An introduction to fitting neural networks can be found in section 10.7 of <span class="citation">Aggarwal (<a href="#ref-Aggarwal2015">2015</a>)</span>.</p>
+<p>I will conclude this report by revisiting the introduction in which we discussed outlier detection using predictive coding in the brain. Interestingly, a recent paper by <span class="citation">Whittington and Bogacz (<a href="#ref-Whittington2017">2017</a>)</span> demonstrated equivalency of neural networks and predictive coding under certain conditions. This has two implications: on the one hand, neural networks might bring us closer to understanding how our brain detects outliers. This is more important in outlier detection than in other statistical fields as outlier detection is more vaguely defined and depends more strongly on human intuition. On the other hand, predictive coding might contain new suggestions for complex probablistic outlier detection methods.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Aggarwal2015">
+<p>Aggarwal, Charu C. 2015. <em>Data Mining</em>. 1st ed. Springer International Publishing.</p>
+</div>
+<div id="ref-keras">
+<p>Allaire, J J, and François Chollet. 2018. <em>keras: R Interface to ’Keras’</em>. <a href="https://cran.r-project.org/package=keras">https://cran.r-project.org/package=keras</a>.</p>
+</div>
+<div id="ref-kernlab">
+<p>Karatzoglou, Alexandros, Alex Smola, Kurt Hornik, and Achim Zeileis. 2004. “kernlab – An S4 Package for Kernel Methods in R.” <em>Journal of Statistical Software</em> 11 (9): 1–20. <a href="http://www.jstatsoft.org/v11/i09/">http://www.jstatsoft.org/v11/i09/</a>.</p>
+</div>
+<div id="ref-Whittington2017">
+<p>Whittington, James C. R., and Rafal Bogacz. 2017. “An Approximation of the Error Backpropagation Algorithm in a Predictive Coding Network with Local Hebbian Synaptic Plasticity.” <em>Neural Computation</em> 29: 1229–62. <a href="https://doi.org/10.1162/NECO">https://doi.org/10.1162/NECO</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="2">
+<li id="fn2"><p>I find this particularly interesting because these computational considerations normally do not play an important part in statistical lectures.<a href="nonlinear-extensions.html#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Neural networks can also encompass more general structures but the one described here is the most suitable for outlier detection.<a href="nonlinear-extensions.html#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="linear.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="summary.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["outlier-detection.pdf", "outlier-detection.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
